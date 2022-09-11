@@ -177,7 +177,7 @@ const createChart = () => {
 
 const getCryptoData = async (name, callback) => {
   try {
-    const response = await fetch(`http://localhost:3000/ohlcv/${name}`);
+    const response = await fetch(`/ohlcv/${name}`);
     const data = await response.json();
 
     callback(data, name);
