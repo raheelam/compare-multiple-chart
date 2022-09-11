@@ -41,7 +41,7 @@ You can check the Node.js and npm versions by running the following commands.
 
 - Install project dependencies by running `npm install`.
 
-- Run project locally `npm start`
+- Run project locally `npm start` or `npm run dev`
 
 - Access main page `localhost:3000`
 
