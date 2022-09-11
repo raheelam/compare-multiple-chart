@@ -1,11 +1,6 @@
 import fs from 'fs';
 
-import { getData } from '../../helpers/data_helpers.js';
-import {
-  readOHLCVData,
-  getOHLCVData,
-  addOHLCVData,
-} from '../../helpers/ohlcv_helpers.js';
+import { readOHLCVData, getOHLCVData } from '../../helpers/ohlcv_helpers.js';
 import handlerResponse from '../../helpers/responseHandler.js';
 import { __dirname } from '../../server.js';
 
@@ -34,26 +29,23 @@ export const getOHLCVFileDataController = async (req, res) => {
   }
 };
 
-export const updateOHLCVFileController = (req, res) => {
-  //add implementation for update csv
-  //check if the data isnt already there before adding
-  res.status(200).send();
-};
-
+//not fully implemented only use incase if new crypto needs to be added
 export const addOHLCVFileController = async (req, res) => {
   const name = req.params.name;
-  const currentDate = new Date();
-  currentDate.setMonth(currentDate.getMonth() - 1, 0);
-  const symbol = req.query.symbol ?? `BITSTAMP_SPOT_${name}_USD`;
-  const period_id = req.query.period_id ?? '1DAY';
-  const time_start = req.query.time_start ?? currentDate.toISOString();
-  const path = `/v1/ohlcv/${symbol}/history?period_id=${period_id}&time_start=${time_start}`;
-  const data = await getData(path);
+  const path = `${__dirname}/data/${name}_OHLCV_Data.csv`;
+  const isExists = fs.existsSync(path);
+  if (isExists)
+    return handlerResponse(res, 400, null, `${name} file already exists`);
 
+  const data = await getOHLCVData({ name });
   if (data.error) {
-    res.send('error occured');
+    return handlerResponse(
+      res,
+      400,
+      null,
+      `couldn't get ${name} data ${data.error}`
+    );
   } else {
-    addOHLCVData({ name, data });
-    res.send('data successfully added');
+    handlerResponse(res, 200, null, `data succesfully added`);
   }
 };
