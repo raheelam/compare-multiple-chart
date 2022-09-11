@@ -1,0 +1,29 @@
+#container {
+    min-height: 100vh;
+    /* 400px; */
+  
+    min-width: 310px;
+   
+  }
+  .header{
+text-align: center;
+    width:100%;
+    padding: 1rem 0;
+    margin-bottom:  0.5rem;
+    background: #FFFF ; 
+  }
+  h1{
+
+    font-style: normal;
+    font-weight: 100;
+    font-display: swap;
+    text-transform: lowercase;
+    margin:0;
+    color: #2B1F70;
+  }
+
+  body{
+    font-family: 'Roboto', sans-serif;
+    padding: 0.1rem 0.5rem;
+    background: #2B1F70 !important; 
+  }
