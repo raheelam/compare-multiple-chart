@@ -1,12 +1,13 @@
 import { Router } from 'express';
+import { validateCryptoName } from '../../validations/addCryptoFileValidation.js';
 
 import {
   getOHLCVFileDataController,
-  addOHLCVFileController,
+  createOHLCVFileController,
 } from '../controllers/ohlcvController.js';
 
 const router = Router();
 router.get('/:name', getOHLCVFileDataController);
-router.get('/add/:name', addOHLCVFileController); //TO DO: change to post
+router.post('/create', validateCryptoName(), createOHLCVFileController);
 
 export default router;

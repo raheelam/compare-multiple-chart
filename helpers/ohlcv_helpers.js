@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { __dirname } from '../server.js';
+import { io, __dirname } from '../server.js';
 import { getData } from './data_helpers.js';
 import { errorHandler } from './error.js';
 import handlerResponse from './responseHandler.js';
@@ -20,7 +20,7 @@ export const readOHLCVData = (path, res) => {
         }
 
         data = data.split('\r\n');
-        data = data.filter((n) => n.length !== 0);
+        data = data.filter((n) => n.trim().length !== 0);
         data.shift();
 
         for (const i in data) {
@@ -113,22 +113,49 @@ export const updateOHLCVFile = async (name) => {
       //logg itt
       //   'something happened while reading file'
     }
-    const isEmpty = data.length === 0;
-    const dataLines = data.split('\r\n');
-    const lastLine = dataLines[dataLines.length - 1];
-    const lastLinecols = lastLine.split(',');
-    const lastLineDate = !isEmpty ? new Date(lastLinecols[0].trim()) : '';
-    const currentDate = new Date();
 
-    if (isEmpty || lastLineDate.getDate() < currentDate.getDate()) {
-      if (!isEmpty)
-        fs.truncate(path, data.length - lastLine.length, function () {
-          console.log('done');
-        });
-      await getOHLCVData({
+    let lastLine,
+      lastLinecols,
+      lastLineDate,
+      currentDate,
+      lastLineDateTime,
+      currentDateTime,
+      diffInMinutes;
+
+    const dataLines = data
+      .split('\r\n')
+      .filter((line) => line.trim().length !== 0);
+    if (dataLines.length > 0) {
+      lastLine = dataLines[dataLines.length - 1];
+      lastLinecols = lastLine.split(',');
+
+      lastLineDate = new Date(lastLinecols[0].trim());
+      lastLineDateTime = lastLineDate?.getTime();
+
+      currentDate = new Date();
+      currentDateTime = currentDate?.getTime();
+
+      diffInMinutes = (currentDateTime - lastLineDateTime) / 60000;
+    }
+    const isEmpty = typeof lastLine === 'undefined';
+
+    if (isEmpty || (lastLineDateTime < currentDateTime && diffInMinutes >= 1)) {
+      // if (!isEmpty)
+      //   fs.truncate(path, dataLines.length - lastLine.length, function () {
+      //     console.log('done');
+      //   });
+      !isEmpty && lastLineDate.setSeconds(lastLineDate.getSeconds() + 1);
+      const data = await getOHLCVData({
+        periodId: '1MIN',
         name,
         timeStart: isEmpty ? null : lastLineDate.toISOString(),
       });
+
+      if (!data.error) {
+        io.emit('newData', () => {
+          console.log('emitted new data');
+        });
+      }
     }
     //log success
   });

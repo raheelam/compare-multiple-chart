@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href='priceList.css' rel='stylesheet'/>
+    <script src='/socket.io/socket.io.js'></script>
+ 
     <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/stock/modules/data.js"></script>
 <script src="https://code.highcharts.com/stock/modules/drag-panes.js"></script>
@@ -18,12 +20,20 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <script src="https://code.highcharts.com/modules/full-screen.js"></script> 
-
+<script src="data.js"></script>
 
 </head>
 <body>
     <div class="header"><img src='peccala-logo.svg'/></div>
+    <button class='add-btc-btn' onclick='addCryptoFile("BTC")'>Add BTC file test</button>
     <div id="container"></div>
     <script src="priceList.js"></script>
+
+    <script>
+        var socket = io();
+        socket.on('newData', (msg)=>{
+            init();
+        })
+    </script>
 </body>
 </html>

@@ -29,15 +29,11 @@ export const getOHLCVFileDataController = async (req, res) => {
   }
 };
 
-//not fully implemented only use incase if new crypto needs to be added
-export const addOHLCVFileController = async (req, res) => {
-  const name = req.params.name;
-  const path = `${__dirname}/data/${name}_OHLCV_Data.csv`;
-  const isExists = fs.existsSync(path);
-  if (isExists)
-    return handlerResponse(res, 400, null, `${name} file already exists`);
+export const createOHLCVFileController = async (req, res) => {
+  const { name } = req.body;
 
   const data = await getOHLCVData({ name });
+
   if (data.error) {
     return handlerResponse(
       res,

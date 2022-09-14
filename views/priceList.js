@@ -3,6 +3,11 @@ let seriesOptions = [],
 let names = ['ADA', 'XRP', 'MATIC'];
 const groupingUnits = [
   [
+    'hour', // unit name
+    [1], // allowed multiples
+  ],
+  ['minute', [1]],
+  [
     'week', // unit name
     [1], // allowed multiples
   ],
@@ -35,43 +40,45 @@ function success(data, name) {
   }
   let sI = names.indexOf(name.toUpperCase());
   if (seriesOptions.length > 0) {
-    sI *= 4;
+    sI *= 2;
   }
   seriesOptions[sI] = {
-    type: 'candlestick',
+    // type: 'candlestick',
     id: name + '-ohcl',
     name: name,
-    data: ohlc,
+    data: price,
+    // pointStart: Date.UTC(2022, 8, 0),
+    // pointInterval: 60 * 1000,
   };
   seriesOptions[sI + 1] = {
     type: 'column',
     id: name + '-volume',
     name: name,
     data: volume,
-    yAxis: 1,
+    yAxis: 1, //+ sI / 2,
   };
-  seriesOptions[sI + 2] = {
-    type: 'vbp',
-    linkedTo: name + '-ohcl',
-    params: {
-      volumeSeriesID: name + '-volume',
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    zoneLines: {
-      enabled: false,
-    },
-  };
+  // seriesOptions[sI + 2] = {
+  //   type: 'vbp',
+  //   linkedTo: name + '-ohcl',
+  //   params: {
+  //     volumeSeriesID: name + '-volume',
+  //   },
+  //   dataLabels: {
+  //     enabled: false,
+  //   },
+  //   zoneLines: {
+  //     enabled: false,
+  //   },
+  // };
 
-  seriesOptions[sI + 3] = {
-    type: 'sma',
-    linkedTo: name + '-ohcl',
-    zIndex: 1,
-    marker: {
-      enabled: false,
-    },
-  };
+  // seriesOptions[sI + 3] = {
+  //   type: 'sma',
+  //   linkedTo: name + '-ohcl',
+  //   zIndex: 1,
+  //   marker: {
+  //     enabled: false,
+  //   },
+  // };
 
   // As we're loading the data asynchronously, we don't know what order it
   // will arrive. So we keep a counter and create the chart when all the data is loaded.
@@ -89,9 +96,12 @@ const createChart = () => {
         dataGrouping: {
           units: groupingUnits,
         },
-        compare: 'percent',
-        showInNavigator: false,
+        // compare: 'value',  //this compare the values as they are rising and falling
+        // showInNavigator: false,
       },
+    },
+    xAxis: {
+      type: 'datetime',
     },
     yAxis: [
       {
@@ -101,9 +111,9 @@ const createChart = () => {
           text: 'Currencies',
         },
         labels: {
-          formatter: function () {
-            return (this.value > 0 ? ' + ' : '') + this.value + '%';
-          },
+          // formatter: function () {
+          //   return (this.value > 0 ? ' + ' : '') + this.value + '%';
+          // },
 
           align: 'left',
           x: -3,
@@ -114,6 +124,7 @@ const createChart = () => {
         },
       },
       {
+        min: 0,
         title: {
           text: 'Volume',
         },
@@ -125,6 +136,31 @@ const createChart = () => {
         height: '30%',
         offset: 0,
       },
+      // {
+      //   min: 0,
+      //   title: {
+      //     text: 'Volume',
+      //   },
+      //   labels: {
+      //     align: 'left',
+      //     x: -3,
+      //   },
+      //   top: '60%',
+      //   height: '20%',
+      //   offset: 1,
+      // },
+      // {
+      //   title: {
+      //     text: 'Volume',
+      //   },
+      //   labels: {
+      //     align: 'left',
+      //     x: -3,
+      //   },
+      //   top: '80%',
+      //   height: '20%',
+      //   offset: 2,
+      // },
     ],
     tooltip: {
       shape: 'square',

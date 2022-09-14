@@ -12,6 +12,9 @@ text-align: center;
     margin-bottom:  0.5rem;
     background: #FFFF ; 
   }
+  .add-btc-btn{
+    color: #2B1F70 ; 
+  }
   h1{
 
     font-style: normal;
@@ -25,5 +28,5 @@ text-align: center;
   body{
     font-family: 'Roboto', sans-serif;
     padding: 0.1rem 0.5rem;
-    background: #2B1F70 !important; 
+    background: #2B1F70 ; 
   }
